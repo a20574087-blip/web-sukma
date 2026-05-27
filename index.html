@@ -56,10 +56,771 @@
     to { transform: translateY(-200px); }
   }
 
-  /* MENU BUTTON RAPI */
   .menu-btn {
     position: fixed;
     top: 18px;
+    left: 18px;
+    z-index: 1001;
+    cursor: pointer;
+    width: 46px;
+    height: 46px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(35, 25, 60, 0.6);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    backdrop-filter: blur(12px);
+    transition: all 0.25s ease;
+  }
+
+  .menu-btn:hover {
+    background: rgba(139, 92, 246, 0.2);
+    border-color: var(--accent);
+    box-shadow: 0 0 15px var(--accent-glow);
+    transform: scale(1.05);
+  }
+
+  .menu-icon {
+    width: 22px;
+    height: 16px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+
+  .menu-icon span {
+    display: block;
+    height: 2.5px;
+    width: 100%;
+    background: var(--text);
+    border-radius: 3px;
+    transition: all 0.35s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  }
+
+  .menu-btn.active .menu-icon span:nth-child(1) {
+    transform: rotate(45deg) translate(5px, 5px);
+  }
+  .menu-btn.active .menu-icon span:nth-child(2) {
+    opacity: 0;
+    transform: translateX(-8px);
+  }
+  .menu-btn.active .menu-icon span:nth-child(3) {
+    transform: rotate(-45deg) translate(5px, -5px);
+  }
+
+  .sidebar {
+    position: fixed;
+    top: 0;
+    left: -280px;
+    width: 280px;
+    height: 100%;
+    background: #0f0f1a;
+    border-right: 1px solid var(--border);
+    transition: 0.35s ease;
+    z-index: 1000;
+    overflow-y: auto;
+    padding-bottom: 20px;
+  }
+  .sidebar.active {
+    left: 0;
+    box-shadow: 4px 0 25px rgba(0,0,0,0.4);
+  }
+
+  .sidebar-header {
+    padding: 60px 20px 20px;
+    text-align: center;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 16px;
+  }
+
+  .sidebar-header img {
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    border: 2px solid var(--accent);
+    object-fit: cover;
+    margin-bottom: 12px;
+    box-shadow: 0 0 20px var(--accent-glow);
+  }
+
+  .sidebar-header h3 {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 4px;
+  }
+
+  .sidebar-header p {
+    font-size: 13px;
+    color: var(--subtext);
+  }
+
+  .sidebar-group {
+    background: rgba(35, 25, 60, 0.3);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    margin: 0 12px 14px;
+    padding: 12px 0;
+    backdrop-filter: blur(8px);
+  }
+
+  .sidebar-group-title {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--accent);
+    padding: 0 16px 10px;
+    letter-spacing: 1px;
+  }
+
+  .sidebar-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 16px;
+    margin: 0 8px;
+    color: var(--text);
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 500;
+    border-radius: 10px;
+    transition: all 0.2s ease;
+  }
+
+  .sidebar-item:hover {
+    background: rgba(139, 92, 246, 0.15);
+    transform: translateX(4px);
+  }
+
+  .sidebar-item.active {
+    background: var(--accent);
+    color: white;
+  }
+
+  .overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.5);
+    opacity: 0;
+    visibility: hidden;
+    transition: 0.3s;
+    z-index: 999;
+  }
+  .overlay.active {
+    opacity: 1;
+    visibility: visible;
+  }
+
+  .loader {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: var(--bg1);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+    transition: opacity 0.6s ease, visibility 0.6s ease;
+    cursor: pointer;
+  }
+  .loader.hidden {
+    opacity: 0;
+    visibility: hidden;
+  }
+  .loader-img {
+    width: 110px;
+    height: 110px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid var(--accent);
+    margin-bottom: 28px;
+    box-shadow: 0 0 40px var(--accent-glow);
+    animation: float 3s ease-in-out infinite;
+  }
+  @keyframes float {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-10px); }
+  }
+  .progress-bar {
+    width: 240px;
+    height: 5px;
+    background: var(--border);
+    border-radius: 50px;
+    overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%;
+    width: 0%;
+    background: linear-gradient(90deg, var(--accent), #a78bfa);
+    border-radius: 50px;
+    transition: width 0.1s linear;
+  }
+
+  .wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: 30px 20px;
+    opacity: 0;
+    transition: opacity 0.8s ease;
+    position: relative;
+    z-index: 1;
+  }
+  .wrapper.show {
+    opacity: 1;
+  }
+  .container {
+    width: 100%;
+    max-width: 580px;
+    text-align: center;
+  }
+  .profile-img {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid var(--accent);
+    margin-bottom: 16px;
+    box-shadow: 0 0 30px var(--accent-glow);
+  }
+  h1 {
+    font-size: 24px;
+    font-weight: 700;
+    margin-bottom: 16px;
+    background: linear-gradient(90deg, var(--text), var(--accent));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .typing-box {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 16px 20px;
+    margin-bottom: 28px;
+    text-align: left;
+    backdrop-filter: blur(var(--blur));
+    min-height: 80px;
+  }
+  .typing-text {
+    font-size: 14px;
+    color: var(--subtext);
+    line-height: 1.7;
+    display: inline-block;
+  }
+  .typing-text::after {
+    content: '|';
+    animation: blink 1s infinite;
+    color: var(--accent);
+  }
+  @keyframes blink {
+    0%, 50% { opacity: 1; }
+    51%, 100% { opacity: 0; }
+  }
+
+  .section-title {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 15px;
+    font-weight: 700;
+    margin: 24px 0 14px;
+    color: var(--text);
+    text-align: left;
+  }
+  .section-title img {
+    width: 20px;
+    height: 20px;
+    filter: brightness(0) invert(1);
+  }
+
+  .note-box {
+    margin-bottom: 12px;
+    text-align: left;
+  }
+  .note-header {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 16px 20px;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-weight: 600;
+    font-size: 15px;
+    backdrop-filter: blur(var(--blur));
+    transition: all 0.3s ease;
+  }
+  .note-header:hover {
+    border-color: var(--accent);
+    box-shadow: 0 0 20px var(--accent-glow);
+  }
+  .note-content {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-top: none;
+    border-radius: 0 0 16px 16px;
+    padding: 0 20px;
+    max-height: 0;
+    overflow: hidden;
+    transition: all 0.4s ease;
+    font-size: 14px;
+    color: var(--subtext);
+    line-height: 1.7;
+  }
+  #noteContent-rental.active {
+    max-height: 300px;
+    overflow-y: auto;
+  }
+  .note-content.active {
+    max-height: 320px;
+    padding: 16px 20px;
+  }
+  .note-header .arrow {
+    transition: transform 0.3s;
+  }
+  .note-header.active .arrow {
+    transform: rotate(180deg);
+  }
+
+  .links {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .link-btn {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 20px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    text-decoration: none;
+    color: var(--text);
+    font-weight: 600;
+    font-size: 15px;
+    transition: all 0.25s ease;
+    cursor: pointer;
+    backdrop-filter: blur(var(--blur));
+  }
+  .link-btn-left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .link-btn:hover {
+    background: var(--accent);
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px var(--accent-glow);
+    border-color: var(--accent);
+  }
+  .link-icon {
+    width: 22px;
+    height: 22px;
+    filter: brightness(0) invert(1);
+  }
+
+  .modal {
+    display: none;
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: rgba(0,0,0,0.7);
+    backdrop-filter: blur(8px);
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    padding: 20px;
+  }
+  .modal.active {
+    display: flex;
+  }
+  .modal-content {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 28px;
+    width: 100%;
+    max-width: 420px;
+    backdrop-filter: blur(var(--blur));
+  }
+  .modal-option {
+    display: block;
+    width: 100%;
+    padding: 14px 16px;
+    margin-bottom: 10px;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    color: var(--text);
+    text-align: left;
+    cursor: pointer;
+    font-size: 15px;
+    font-weight: 500;
+    transition: all 0.2s;
+  }
+  .modal-option:hover {
+    background: var(--accent);
+    color: white;
+  }
+  .modal-close {
+    margin-top: 12px;
+    width: 100%;
+    padding: 12px;
+    background: transparent;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    color: var(--subtext);
+    cursor: pointer;
+    font-weight: 600;
+  }
+  footer {
+    margin-top: 30px;
+    font-size: 13px;
+    color: var(--subtext);
+    opacity: 0.7;
+  }
+  @media (max-height: 800px) {
+    .wrapper {
+      align-items: flex-start;
+      padding-top: 40px;
+    }
+  }
+</style>
+</head>
+<body>
+  <div class="menu-btn" id="menuBtn">
+    <div class="menu-icon">
+      <span></span>
+      <span></span>
+      <span></span>
+    </div>
+  </div>
+
+  <div class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <img src="https://files.catbox.moe/6m6ii5.jpg" alt="Profile">
+      <h3>SUKMA JR</h3>
+      <p>6282266888892</p>
+    </div>
+
+    <div class="sidebar-group">
+      <div class="sidebar-group-title">MENU UTAMA</div>
+      <a href="index.html" class="sidebar-item active">🏠 Beranda</a>
+      <a href="Layanan.html" target="_blank" class="sidebar-item">📋 Layanan</a>
+      <a href="chat-ai.html" target="_blank" class="sidebar-item">🤖 ChatAi</a>
+      <a href="downloader.html" target="_blank" class="sidebar-item">⬇️ Downloader</a>
+      <a href="youtube.html" target="_blank" class="sidebar-item">▶️ youtube</a>
+    </div>
+
+    <div class="sidebar-group">
+      <div class="sidebar-group-title">SUPPORT</div>
+      <a href="sociabuzz.html" target="_blank" class="sidebar-item">💖 Support (sociabuzz)</a>
+      <a href="kritik.html" target="_blank" class="sidebar-item">📝 Kritik & Saran</a>
+    </div>
+  </div>
+
+  <div class="overlay" id="overlay"></div>
+
+  <div class="loader" id="loader">
+    <img src="https://files.catbox.moe/6m6ii5.jpg" alt="Loading" class="loader-img">
+    <div class="progress-bar">
+      <div class="progress-fill" id="progressFill"></div>
+    </div>
+  </div>
+
+  <div class="wrapper" id="wrapper">
+    <div class="container">
+      
+      <img src="https://files.catbox.moe/6m6ii5.jpg" alt="Foto Profil" class="profile-img">
+      <h1>SUKMA JR</h1>
+
+      <div class="typing-box">
+        <span class="typing-text" id="typingText"></span>
+      </div>
+      
+      <div class="section-title">
+        📋 LANGKAH-LANGKAH
+      </div>
+
+      <div class="note-box">
+        <div class="note-header" onclick="toggleNote('jual')">
+          <span>💰 JUAL AKUN</span>
+          <span class="arrow" id="arrow-jual">▼</span>
+        </div>
+        <div class="note-content" id="noteContent-jual">
+          <p>📩 <strong>Kirim Detail Akun</strong><br>
+          Kirim informasi akun yang ingin dijual kepada admin untuk pengecekan.</p>
+          <p>🛡️ <strong>Verifikasi & Pengamanan</strong><br>
+          Admin akan memeriksa kondisi akun dan mengamankannya terlebih dahulu.</p>
+          <p>⚡ <strong>Pembayaran Dikirim</strong><br>
+          Setelah akun berhasil diamankan, dana langsung ditransfer ke penjual.</p>
+        </div>
+      </div>
+
+      <div class="note-box">
+        <div class="note-header" onclick="toggleNote('beli')">
+          <span>🛒 BELI AKUN</span>
+          <span class="arrow" id="arrow-beli">▼</span>
+        </div>
+        <div class="note-content" id="noteContent-beli">
+          <p>🎮 <strong>Pilih Akun</strong><br>
+          Lihat katalog akun yang tersedia di grup atau tanyakan ke admin.</p>
+          <p>💳 <strong>Proses Pembayaran</strong><br>
+          Lakukan pembayaran sesuai harga yang disepakati ke rekening admin.</p>
+          <p>✅ <strong>Akun Dikirim</strong><br>
+          Setelah pembayaran masuk, data akun akan dikirim lengkap dengan garansi.</p>
+        </div>
+      </div>
+
+      <div class="note-box">
+        <div class="note-header" onclick="toggleNote('rental')">
+          <span>⏳ RENTAL AKUN</span>
+          <span class="arrow" id="arrow-rental">▼</span>
+        </div>
+        <div class="note-content" id="noteContent-rental">
+          <p>📋 <strong>Pilih Akun Rental</strong><br>
+          Pilih akun yang ingin disewa dan tentukan durasi rental.</p>
+          <p>💸 <strong>Pembayaran Rental</strong><br>
+          Lakukan pembayaran sesuai tarif dan masa sewa yang dipilih.</p>
+          <p>🚀 <strong>Akses Akun Diberikan</strong><br>
+          Admin akan mengirim data akun yang dapat digunakan selama masa rental berlangsung.</p>
+          <hr style="margin:15px 0; opacity:.3;">
+          <p><strong>⚠️ NOTE RENTAL AKUN</strong></p>
+          <p>• Dilarang mengganti password, email, atau data keamanan akun.</p>
+          <p>• Dilarang melakukan aktivitas yang merugikan akun atau menyebabkan akun terkena sanksi.</p>
+          <p>• Akun hanya dapat digunakan selama masa rental yang telah disepakati.</p>
+          <p>• Setelah masa rental berakhir, akses akun wajib dikembalikan kepada admin.</p>
+          <p>• Tidak ada refund apabila terjadi pelanggaran terhadap aturan rental.</p>
+          <p>• Dengan melakukan rental, penyewa dianggap telah menyetujui seluruh ketentuan yang berlaku.</p>
+        </div>
+      </div>
+
+      <div class="section-title">
+        <img src="https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/whatsapp.svg" alt="contact">
+        CONTACT
+      </div>
+
+      <div class="links">
+        <div class="link-btn" onclick="openModal()">
+          <div class="link-btn-left">
+            <img src="https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/whatsapp.svg" alt="WA" class="link-icon">
+            ADMIN WHATSAPP
+          </div>
+          <span>></span>
+        </div>
+
+        <a href="https://t.me/sukmajrr" class="link-btn" target="_blank">
+          <div class="link-btn-left">
+            <img src="https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/telegram.svg" alt="Telegram" class="link-icon">
+            ADMIN TELEGRAM
+          </div>
+          <span>></span>
+        </a>
+      </div>
+
+      <div class="section-title">
+        <img src="https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/instagram.svg" alt="sosmed">
+        SOSMED
+      </div>
+
+      <div class="links">
+        <a href="https://www.instagram.com/sukmaplengerr?igsh=MTV2MGs3ZndiYTJwNg==" class="link-btn" target="_blank">
+          <div class="link-btn-left">
+            <img src="https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/instagram.svg" alt="Instagram" class="link-icon">
+            INSTAGRAM
+          </div>
+          <span>></span>
+        </a>
+
+        <a href="https://tiktok.com/@sukma_bejirr" class="link-btn" target="_blank">
+          <div class="link-btn-left">
+            <img src="https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/tiktok.svg" alt="TikTok" class="link-icon">
+            TIKTOK
+          </div>
+          <span>></span>
+        </a>
+
+        <a href="https://youtube.com/@voltchici.8085" class="link-btn" target="_blank">
+          <div class="link-btn-left">
+            <img src="https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/youtube.svg" alt="YouTube" class="link-icon">
+            YOUTUBE
+          </div>
+          <span>></span>
+        </a>
+      </div>
+
+      <div class="section-title">
+        <img src="https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/whatsapp.svg" alt="grup">
+        GRUP
+      </div>
+
+      <div class="links">
+        <a href="https://chat.whatsapp.com/K0YZhprilVmAtzVInFCaph" class="link-btn" target="_blank">
+          <div class="link-btn-left">
+            <img src="https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/whatsapp.svg" alt="Grup WA" class="link-icon">
+            GRUP LAGA FREE FIRE
+          </div>
+          <span>></span>
+        </a>
+
+        <a href="https://whatsapp.com/channel/0029VbBtNXF6buMMYswGAm1z" class="link-btn" target="_blank">
+          <div class="link-btn-left">
+            <img src="https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/whatsapp.svg" alt="Saluran WA" class="link-icon">
+            SALURAN WHATSAPP
+          </div>
+          <span>></span>
+        </a>
+
+        <a href="https://t.me/sukmajrrr" class="link-btn" target="_blank">
+          <div class="link-btn-left">
+            <img src="https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/telegram.svg" alt="Saluran Telegram" class="link-icon">
+            SALURAN TELEGRAM
+          </div>
+          <span>></span>
+        </a>
+        
+        <a href="https://chat.whatsapp.com/K0YZhprilVmAtzVInFCaph" class="link-btn" target="_blank">
+          <div class="link-btn-left">
+            <img src="https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/whatsapp.svg" alt="Grup WA" class="link-icon">
+            GRUP JB ALL GAME
+          </div>
+          <span>></span>
+        </a>
+      </div>
+
+      <footer>© 2026 SUKMA JR</footer>
+    </div>
+  </div>
+
+  <div class="modal" id="waModal" onclick="closeModal(event)">
+    <div class="modal-content">
+      <h3>Pilih Tujuan Chat</h3>
+      <button class="modal-option" onclick="sendWA('Halo min aku mau beli akun game')">🎮 Beli Akun Game</button>
+      <button class="modal-option" onclick="sendWA('Halo min aku mau nanya nanya')">❓ Tanya-Tanya</button>
+      <button class="modal-option" onclick="sendWA('Halo min aku mau jual akun, mau ambil ga?')">💰 Jual Akun</button>
+      <button class="modal-option" onclick="sendWA('Halo min aku mau rental akun nya dong')">⏳ Rental Akun</button>
+      <button class="modal-close" onclick="closeModal()">Batal</button>
+    </div>
+  </div>
+
+<script>
+  const waNumber = "6282266888892";
+  let hasSpoken = false;
+  
+  const menuBtn = document.getElementById('menuBtn');
+  const sidebar = document.getElementById('sidebar');
+  const overlay = document.getElementById('overlay');
+
+  menuBtn.onclick = () => {
+    menuBtn.classList.toggle('active');
+    sidebar.classList.toggle('active');
+    overlay.classList.toggle('active');
+    document.body.style.overflow = sidebar.classList.contains('active') ? 'hidden' : 'auto';
+  }
+  overlay.onclick = () => {
+    menuBtn.classList.remove('active');
+    sidebar.classList.remove('active');
+    overlay.classList.remove('active');
+    document.body.style.overflow = 'auto';
+  }
+
+  function openKritik() {
+    window.open('https://wa.me/6282266888892?text=Kritik%20%26%20Saran:', '_blank');
+    overlay.click();
+  }
+
+  const text = "Halooo... Selamat datang di website SukmaJr. Silahkan pilih menu di bawah untuk menghubungi admin jika ingin membeli, menjual, rental akun harap baca dan patuhi langkah-langkah nya ya. Terimaksih";
+  let i = 0;
+  const typingElement = document.getElementById('typingText');
+  
+  function typeWriter() {
+    if (i < text.length) {
+      typingElement.innerHTML += text.charAt(i);
+      i++;
+      setTimeout(typeWriter, 35);
+    }
+  }
+
+  function speakText() {
+    if ('speechSynthesis' in window) {
+      if (hasSpoken) return;
+      if (window.speechSynthesis.speaking) window.speechSynthesis.cancel();
+      
+      const speech = new SpeechSynthesisUtterance(text);
+      speech.lang = 'id-ID';
+      speech.rate = 0.9;
+      speech.pitch = 1;
+      speech.volume = 1;
+      
+      speech.onend = () => { hasSpoken = true; };
+      
+      window.speechSynthesis.speak(speech);
+    }
+  }
+
+  let progress = 0;
+  const progressFill = document.getElementById('progressFill');
+  const loader = document.getElementById('loader');
+  const wrapper = document.getElementById('wrapper');
+
+  const interval = setInterval(() => {
+    progress += 2;
+    progressFill.style.width = progress + '%';
+    if (progress >= 100) {
+      clearInterval(interval);
+      setTimeout(() => {
+        loader.innerHTML = `
+          <img src="https://files.catbox.moe/6m6ii5.jpg" alt="Loading" class="loader-img">
+          <h2 style="color:white; margin-top:20px; font-weight:600;">Tap to Enter</h2>
+          <p style="color:var(--subtext); margin-top:8px;">Klik untuk masuk & dengar suara</p>
+        `;
+        
+        loader.addEventListener('click', () => {
+          speakText();
+          loader.classList.add('hidden');
+          wrapper.classList.add('show');
+          document.body.style.overflow = 'auto';
+          typeWriter();
+        }, { once: true });
+        
+      }, 400);
+    }
+  }, 40);
+
+  function toggleNote(type) {
+    const content = document.getElementById('noteContent-' + type);
+    const arrow = document.getElementById('arrow-' + type);
+    content.classList.toggle('active');
+    arrow.classList.toggle('active');
+  }
+
+  function openModal() {
+    document.getElementById('waModal').classList.add('active');
+  }
+
+  function closeModal(event) {
+    if (!event || event.target.id === 'waModal') {
+      document.getElementById('waModal').classList.remove('active');
+    }
+  }
+
+  function sendWA(message) {
+    const url = `https://wa.me/${waNumber}?text=${encodeURIComponent(message)}`;
+    window.open(url, '_blank');
+    closeModal();
+  }
+</script>
+</body>
+</html>    top: 18px;
     left: 18px;
     z-index: 1001;
     cursor: pointer;
