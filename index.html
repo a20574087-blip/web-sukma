@@ -714,7 +714,7 @@
 
 <script>
   const waNumber = "6282266888892";
-  let hasSpoken = false;
+  let audioPlayed = false;
   
   const menuBtn = document.getElementById('menuBtn');
   const sidebar = document.getElementById('sidebar');
@@ -749,23 +749,22 @@
   }
 
   function speakText() {
-    if ('speechSynthesis' in window) {
-      if (hasSpoken) return;
-      if (window.speechSynthesis.speaking) window.speechSynthesis.cancel();
-      
-      const speech = new SpeechSynthesisUtterance(text);
-      speech.lang = 'id-ID';
-      speech.rate = 0.9;
-      speech.pitch = 1;
-      speech.volume = 1;
-      
-      speech.onend = () => { hasSpoken = true; };
-      
-      window.speechSynthesis.speak(speech);
-    }
+    if (audioPlayed) return;
+    if (!('speechSynthesis' in window)) return;
+    
+    audioPlayed = true;
+    window.speechSynthesis.cancel();
+    
+    const speech = new SpeechSynthesisUtterance(text);
+    speech.lang = 'id-ID';
+    speech.rate = 0.9;
+    speech.pitch = 1;
+    speech.volume = 1;
+    
+    window.speechSynthesis.speak(speech);
   }
 
-  // Loading bar - langsung jalan tanpa nunggu DOMContentLoaded
+  // Loading bar
   let progress = 0;
   const interval = setInterval(() => {
     progress += 2;
@@ -779,19 +778,20 @@
           <p style="color:var(--subtext); margin-top:8px;">Klik untuk masuk & dengar suara</p>
         `;
         
-        loader.addEventListener('click', () => {
+        loader.onclick = () => {
           speakText();
           loader.classList.add('hidden');
           wrapper.classList.add('show');
           document.body.style.overflow = 'auto';
           typeWriter();
-        }, { once: true });
+          loader.onclick = null;
+        };
         
       }, 300);
     }
   }, 40);
 
-  // Fallback: kalau 4 detik loading stuck, langsung buka
+  // Fallback 4 detik
   setTimeout(() => {
     if(loader && !loader.classList.contains('hidden')){
       loader.classList.add('hidden');
@@ -831,4 +831,4 @@
   window.sendWA = sendWA;
 </script>
 </body>
-</html>
+  </html>
