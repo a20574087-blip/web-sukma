@@ -1,0 +1,662 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>SukmaJr Store - Layanan</title>
+<style>
+  :root {
+    --bg1: #0a0a1f;
+    --bg2: #1a0b2e;
+    --bg3: #2d1b4e;
+    --card: rgba(35, 25, 60, 0.6);
+    --text: #f5f5f7;
+    --subtext: #a1a1aa;
+    --accent: #8b5cf6;
+    --accent-glow: rgba(139, 92, 246, 0.5);
+    --border: rgba(139, 92, 246, 0.2);
+  }
+
+  *{box-sizing:border-box;font-family:'Poppins',Inter,system-ui,Arial}
+  
+  body{
+    margin:0;
+    background: radial-gradient(1200px 800px at 50% -20%, var(--bg2), var(--bg1)),
+                linear-gradient(180deg, var(--bg1), var(--bg3));
+    color:var(--text);
+    min-height:100vh;
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background-image: 
+      radial-gradient(2px 2px at 20px 30px, var(--accent), transparent),
+      radial-gradient(2px 2px at 40px 70px, var(--accent), transparent);
+    background-size: 200px 200px;
+    opacity: 0.2;
+    animation: particles 20s linear infinite;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  @keyframes particles{
+    from{transform:translateY(0)}
+    to{transform:translateY(-200px)}
+  }
+
+  /* HAMBURGER BUTTON */
+  .menu-btn {
+    position: fixed;
+    top: 18px;
+    left: 18px;
+    z-index: 1001;
+    cursor: pointer;
+    width: 46px;
+    height: 46px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(35, 25, 60, 0.6);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    backdrop-filter: blur(12px);
+    transition: all 0.25s ease;
+  }
+
+  .menu-btn:hover {
+    background: rgba(139, 92, 246, 0.2);
+    border-color: var(--accent);
+    box-shadow: 0 0 15px var(--accent-glow);
+    transform: scale(1.05);
+  }
+
+  .menu-icon {
+    width: 22px;
+    height: 16px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+
+  .menu-icon span {
+    display: block;
+    height: 2.5px;
+    width: 100%;
+    background: var(--text);
+    border-radius: 3px;
+    transition: all 0.35s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  }
+
+  .menu-btn.active .menu-icon span:nth-child(1) {
+    transform: rotate(45deg) translate(5px, 5px);
+  }
+  .menu-btn.active .menu-icon span:nth-child(2) {
+    opacity: 0;
+    transform: translateX(-8px);
+  }
+  .menu-btn.active .menu-icon span:nth-child(3) {
+    transform: rotate(-45deg) translate(5px, -5px);
+  }
+
+  /* SIDEBAR KOLOM */
+  .sidebar {
+    position: fixed;
+    top: 0;
+    left: -280px;
+    width: 280px;
+    height: 100%;
+    background: #0f0f1a;
+    border-right: 1px solid var(--border);
+    transition: 0.35s ease;
+    z-index: 1000;
+    overflow-y: auto;
+    padding-bottom: 20px;
+  }
+  .sidebar.active {
+    left: 0;
+    box-shadow: 4px 0 25px rgba(0,0,0,0.4);
+  }
+
+  .sidebar-header {
+    padding: 60px 20px 20px;
+    text-align: center;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 16px;
+  }
+
+  .sidebar-header img {
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    border: 2px solid var(--accent);
+    object-fit: cover;
+    margin-bottom: 12px;
+    box-shadow: 0 0 20px var(--accent-glow);
+  }
+
+  .sidebar-header h3 {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 4px;
+  }
+
+  .sidebar-header p {
+    font-size: 13px;
+    color: var(--subtext);
+  }
+
+  .sidebar-group {
+    background: rgba(35, 25, 60, 0.3);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    margin: 0 12px 14px;
+    padding: 12px 0;
+    backdrop-filter: blur(8px);
+  }
+
+  .sidebar-group-title {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--accent);
+    padding: 0 16px 10px;
+    letter-spacing: 1px;
+  }
+
+  .sidebar-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 16px;
+    margin: 0 8px;
+    color: var(--text);
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 500;
+    border-radius: 10px;
+    transition: all 0.2s ease;
+  }
+
+  .sidebar-item:hover {
+    background: rgba(139, 92, 246, 0.15);
+    transform: translateX(4px);
+  }
+
+  .sidebar-item.active {
+    background: var(--accent);
+    color: white;
+  }
+
+  .overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.5);
+    opacity: 0;
+    visibility: hidden;
+    transition: 0.3s;
+    z-index: 999;
+  }
+  .overlay.active {
+    opacity: 1;
+    visibility: visible;
+  }
+
+  /* LOADING SCREEN */
+  #intro{
+    position:fixed; inset:0; background:var(--bg1);
+    display:flex; flex-direction:column;
+    align-items:center; justify-content:center;
+    z-index:9999; padding:20px; transition:opacity .6s;
+  }
+  #intro img{
+    width:120px;height:120px;border-radius:50%;
+    border:3px solid var(--accent);
+    object-fit:cover;
+    box-shadow:0 0 40px var(--accent-glow);
+    animation:bounce 1s infinite alternate;
+  }
+  #intro p{color:var(--text);margin-top:14px;font-size:18px;font-weight:600}
+  
+  .loading-bar{
+    width:80%;max-width:280px;height:10px;
+    background:rgba(139,92,246,.15);
+    border-radius:10px;margin-top:18px;
+    overflow:hidden;position:relative;
+  }
+  .loading-bar div{
+    height:100%;width:0%;
+    background:linear-gradient(90deg,var(--accent),#a78bfa);
+    border-radius:10px;transition:width .2s linear;
+  }
+  .loading-bar span{
+    position:absolute;top:0;left:50%;transform:translateX(-50%);
+    color:#fff;font-size:10px;font-weight:bold;line-height:10px;
+  }
+  @keyframes bounce{0%{transform:translateY(0)}100%{transform:translateY(-10px)}}
+
+  /* MAIN PAGE */
+  .wrap{max-width:980px;margin:80px auto 14px;padding:12px;position:relative;z-index:1}
+  
+  .navbar{
+    display:flex;align-items:center;gap:12px;
+    background:var(--card);
+    border:1px solid var(--border);
+    backdrop-filter:blur(16px);
+    color:var(--text);
+    padding:16px 20px;
+    border-radius:16px;
+    box-shadow:0 8px 30px rgba(139,92,246,0.15)
+  }
+  
+  .brand{display:flex;align-items:center;gap:12px}
+  .brand img{
+    width:46px;height:46px;
+    border-radius:50%; /* UBAH JADI BULAT */
+    object-fit:cover;
+    border:2px solid var(--accent);
+    box-shadow:0 0 20px var(--accent-glow)
+  }
+  .brand h1{font-size:18px;margin:0;font-weight:700}
+  
+  .nav-right{margin-left:auto;display:flex;align-items:center;gap:10px}
+  .time-box{
+    background:rgba(139,92,246,0.15);
+    border:1px solid var(--border);
+    padding:8px 12px;
+    border-radius:10px;
+    font-size:13px;
+    font-weight:600
+  }
+  
+  .hero{
+    margin-top:16px;
+    background:var(--card);
+    border:1px solid var(--border);
+    backdrop-filter:blur(16px);
+    border-radius:16px;
+    padding:16px;
+    box-shadow:0 8px 30px rgba(139,92,246,0.15)
+  }
+  
+  .banner{
+    height:140px;border-radius:12px;
+    background:linear-gradient(135deg,rgba(139,92,246,0.3),rgba(167,139,250,0.2));
+    border:1px solid var(--border);
+    display:flex;align-items:center;justify-content:center;
+    font-weight:700;color:var(--text);
+    font-size:16px
+  }
+  
+  .section-title{
+    color:var(--text);
+    margin:16px 6px;
+    font-weight:700;
+    font-size:15px
+  }
+  
+  .grid{
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:14px;margin:12px
+  }
+  
+  .card{
+    background:var(--card);
+    border:1px solid var(--border);
+    backdrop-filter:blur(16px);
+    border-radius:16px;
+    padding:20px 16px;
+    text-align:center;
+    box-shadow:0 6px 20px rgba(139,92,246,0.1);
+    cursor:pointer;text-decoration:none;
+    transition:all 0.25s ease
+  }
+  
+  .card:hover{
+    transform:translateY(-4px);
+    border-color:var(--accent);
+    box-shadow:0 12px 30px var(--accent-glow);
+    background:rgba(139,92,246,0.2)
+  }
+  
+  .card img{
+    width:60px;height:60px;
+    border-radius:12px;
+    object-fit:cover;
+    filter:brightness(0) invert(1)
+  }
+  
+  .card small{
+    display:block;
+    margin-top:12px;
+    color:var(--text);
+    font-weight:600;
+    font-size:14px
+  }
+
+  .card p{
+    margin:6px 0 0;
+    color:var(--subtext);
+    font-size:12px
+  }
+  
+  /* FAB TOMBOL ! */
+  .fab{
+    position:fixed;
+    right:18px;bottom:18px;
+    width:56px;height:56px;
+    border-radius:50%; /* BULAT */
+    background:linear-gradient(135deg,var(--accent),#a78bfa);
+    color:#fff;
+    display:flex;align-items:center;justify-content:center;
+    font-size:28px;
+    font-weight:700;
+    box-shadow:0 8px 25px var(--accent-glow);
+    cursor:pointer;
+    transition:all 0.25s ease;
+    border:none;
+    z-index: 100;
+  }
+  
+  .fab:hover{
+    transform:scale(1.1);
+    box-shadow:0 12px 35px var(--accent-glow)
+  }
+
+  /* TUTORIAL POPUP FULL LAYAR */
+  .tutorial-modal {
+    position: fixed;
+    inset: 0;
+    background: rgba(10, 10, 31, 0.95);
+    backdrop-filter: blur(20px);
+    z-index: 9998;
+    display: none;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    overflow-y: auto;
+    padding: 60px 20px 40px;
+  }
+  .tutorial-modal.active {
+    display: block;
+    opacity: 1;
+  }
+
+  .tutorial-close {
+    position: fixed;
+    top: 18px;
+    right: 18px;
+    width: 46px;
+    height: 46px;
+    border-radius: 50%;
+    background: var(--card);
+    border: 1px solid var(--border);
+    color: var(--text);
+    font-size: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 9999;
+    transition: all 0.25s ease;
+  }
+  .tutorial-close:hover {
+    background: var(--accent);
+    border-color: var(--accent);
+    transform: rotate(90deg);
+  }
+
+  .tutorial-content {
+    max-width: 700px;
+    margin: 0 auto;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 30px;
+  }
+
+  .tutorial-content h2 {
+    color: var(--accent);
+    margin-top: 0;
+    font-size: 22px;
+  }
+
+  .tutorial-content h3 {
+    color: var(--text);
+    margin-top: 24px;
+    font-size: 16px;
+  }
+
+  .tutorial-content p, .tutorial-content li {
+    color: var(--subtext);
+    line-height: 1.6;
+    font-size: 14px;
+  }
+
+  .tutorial-content ul {
+    padding-left: 20px;
+  }
+
+  .tutorial-content img {
+    width: 100%;
+    border-radius: 12px;
+    margin: 12px 0;
+    border: 1px solid var(--border);
+  }
+  
+  @media(max-width:480px){.grid{grid-template-columns:1fr}}
+</style>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<!-- HAMBURGER -->
+<div class="menu-btn" id="menuBtn">
+  <div class="menu-icon">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+</div>
+
+<!-- SIDEBAR -->
+<div class="sidebar" id="sidebar">
+  <div class="sidebar-header">
+    <img src="https://img1.pixhost.to/images/8477/637817865_by_rikishopreal.jpg" alt="Profile">
+    <h3>SukmaJr Store</h3>
+    <p>6282266888892</p>
+  </div>
+
+  <div class="sidebar-group">
+    <div class="sidebar-group-title">MENU UTAMA</div>
+    <a href="index.html" class="sidebar-item">🏠 Beranda</a>
+    <a href="layanan.html" class="sidebar-item active">📋 Layanan</a>
+  </div>
+
+  <div class="sidebar-group">
+    <div class="sidebar-group-title">LAYAN</div>
+    <a href="list-akun-rental.html" class="sidebar-item">⏳ Akun Rental</a>
+    <a href="list-akun-jual.html" class="sidebar-item">💰 Akun Jual</a>
+  </div>
+
+  <div class="sidebar-group">
+    <div class="sidebar-group-title">LAINNYA</div>
+    <a href="kritik.html" class="sidebar-item">📝 Kritik & Saran</a>
+  </div>
+</div>
+
+<div class="overlay" id="overlay"></div>
+
+<!-- LOADING SCREEN -->
+<div id="intro">
+  <img src="https://img1.pixhost.to/images/8477/637817865_by_rikishopreal.jpg" alt="SukmaJr Profil">
+  <p>Memuat SukmaJr Store...</p>
+  <div class="loading-bar">
+    <div id="bar"></div>
+    <span id="percent">0%</span>
+  </div>
+</div>
+
+<!-- MAIN CONTENT -->
+<div class="wrap" id="main" style="display:none">
+  <nav class="navbar">
+    <div class="brand">
+      <img id="logo" src="https://img1.pixhost.to/images/8477/637817865_by_rikishopreal.jpg" alt="logo">
+      <div>
+        <h1>SukmaJr Store</h1>
+        <div style="font-size:12px;opacity:.8">Store Digital</div>
+      </div>
+    </div>
+    <div class="nav-right">
+      <div id="datetime" class="time-box">--:-- • -- --- ----</div>
+    </div>
+  </nav>
+
+  <div class="hero">
+    <div class="banner">Jual & Rental Akun Game Terpercaya</div>
+  </div>
+
+  <div style="margin-top:14px">
+    <div class="section-title">Layanan Kami</div>
+    <div class="grid">
+      <a class="card" href="list-akun-rental.html">
+        <img src="https://img.icons8.com/ios/100/000/clock.png" alt="rental">
+        <small>List Akun Rental</small>
+        <p>Sewa akun game harian/mingguan</p>
+      </a>
+      <a class="card" href="list-akun-jual.html">
+        <img src="https://img.icons8.com/ios/100/000/sell.png" alt="jual">
+        <small>List Akun Jual</small>
+        <p>Beli akun siap pakai bergaransi</p>
+      </a>
+    </div>
+  </div>
+</div>
+
+<!-- TOMBOL ! -->
+<button class="fab" id="tutorialBtn">!</button>
+
+<!-- TUTORIAL POPUP -->
+<div class="tutorial-modal" id="tutorialModal">
+  <button class="tutorial-close" id="tutorialClose">×</button>
+  <div class="tutorial-content">
+    <h2>📖 Tutorial Cara Beli Akun</h2>
+    
+    <h3>1. Pilih Akun</h3>
+    <p>Buka menu "Akun Jual" atau "Akun Rental". Scroll dan pilih akun yang sesuai budget lu.</p>
+    
+    <h3>2. Cek Detail & Foto</h3>
+    <p>Geser gambar di carousel buat liat SS akun. Baca deskripsi, harga, dan spesifikasi dengan teliti.</p>
+    
+    <h3>3. Klik Tombol Beli/Sewa</h3>
+    <p>Tekan tombol "Beli Sekarang" atau "Sewa Sekarang". Lu bakal langsung diarahkan ke WhatsApp admin.</p>
+    
+    <h3>4. Konfirmasi Order</h3>
+    <p>Kirim pesan yang udah auto-generate ke admin. Sebutin nama akun yang mau dibeli.</p>
+    
+    <h3>5. Pembayaran & Pengiriman</h3>
+    <p>Lakukan pembayaran via metode yang disepakati. Akun bakal dikirim setelah pembayaran sukses.</p>
+    
+    <h3>Tips Aman:</h3>
+    <ul>
+      <li>Selalu cek SS dan video gameplay sebelum beli</li>
+      <li>Gunakan rekber kalau transaksi besar</li>
+      <li>Jangan share data akun ke orang lain</li>
+      <li>Simpan bukti transfer</li>
+    </ul>
+
+    <p style="margin-top:30px; text-align:center; color:var(--accent); font-weight:600;">
+      Ada kendala? Tanya ke admin nomor ada di beranda!
+    </p>
+  </div>
+</div>
+
+<script>
+  // Menu toggle
+  const menuBtn = document.getElementById('menuBtn');
+  const sidebar = document.getElementById('sidebar');
+  const overlay = document.getElementById('overlay');
+
+  menuBtn.onclick = () => {
+    menuBtn.classList.toggle('active');
+    sidebar.classList.toggle('active');
+    overlay.classList.toggle('active');
+    document.body.style.overflow = sidebar.classList.contains('active') ? 'hidden' : 'auto';
+  }
+  
+  overlay.onclick = () => {
+    menuBtn.classList.remove('active');
+    sidebar.classList.remove('active');
+    overlay.classList.remove('active');
+    document.body.style.overflow = 'auto';
+  }
+
+  // Loading
+  const intro = document.getElementById('intro');
+  const main = document.getElementById('main');
+  const bar = document.getElementById('bar');
+  const percent = document.getElementById('percent');
+
+  if(localStorage.getItem('loaded')){
+    intro.style.display='none';
+    main.style.display='block';
+  } else {
+    let progress=0;
+    const interval = setInterval(()=>{
+      progress += 1;
+      if(progress>100) progress=100;
+      bar.style.width = progress+'%';
+      percent.textContent = progress+'%';
+      if(progress>=100){
+        clearInterval(interval);
+        setTimeout(()=>{
+          intro.style.opacity='0';
+          setTimeout(()=>{
+            intro.style.display='none';
+            main.style.display='block';
+            localStorage.setItem('loaded','true');
+          },600);
+        },200);
+      }
+    },30);
+  }
+
+  function updateDateTime(){
+    const el=document.getElementById('datetime');
+    const d = new Date();
+    const opts = { weekday:'short', year:'numeric', month:'short', day:'numeric' };
+    el.textContent = d.toLocaleTimeString('id-ID',{hour:'2-digit',minute:'2-digit'})+' • '+d.toLocaleDateString('id-ID',opts);
+  }
+  setInterval(updateDateTime,1000);
+  updateDateTime();
+
+  // TUTORIAL MODAL
+  const tutorialBtn = document.getElementById('tutorialBtn');
+  const tutorialModal = document.getElementById('tutorialModal');
+  const tutorialClose = document.getElementById('tutorialClose');
+
+  tutorialBtn.onclick = () => {
+    tutorialModal.classList.add('active');
+    document.body.style.overflow = 'hidden';
+  }
+
+  tutorialClose.onclick = () => {
+    tutorialModal.classList.remove('active');
+    document.body.style.overflow = 'auto';
+  }
+
+  // Tutup modal kalau klik area luar
+  tutorialModal.onclick = (e) => {
+    if(e.target === tutorialModal) {
+      tutorialModal.classList.remove('active');
+      document.body.style.overflow = 'auto';
+    }
+  }
+</script>
+</body>
+</html>

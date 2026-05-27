@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Chat AI - SUKMA JR</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+
+<style>
+:root{
+  --bg1:#0a0a1f;
+  --bg2:#1a0b2e;
+  --card:rgba(35,25,60,.5);
+  --text:#f5f5f7;
+  --subtext:#a1a1aa;
+  --accent:#8b5cf6;
+  --user-msg:#8b5cf6;
+  --ai-msg:rgba(255,255,255,.08);
+  --border:rgba(139,92,246,.2);
+  --blur:16px;
+}
+
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Poppins',sans-serif;}
+
+body{
+  background:linear-gradient(135deg,var(--bg1),var(--bg2));
+  color:var(--text);
+  height:100vh;
+  display:flex;
+  flex-direction:column;
+}
+
+.header{
+  padding:16px 20px;
+  border-bottom:1px solid var(--border);
+  backdrop-filter:blur(var(--blur));
+  background:var(--card);
+  display:flex;
+  align-items:center;
+  gap:12px;
+}
+
+.back{
+  color:var(--accent);
+  text-decoration:none;
+  font-weight:600;
+  font-size:20px;
+}
+
+.header h2{
+  font-size:18px;
+  font-weight:600;
+}
+
+.chat-container{
+  flex:1;
+  overflow-y:auto;
+  padding:20px;
+  display:flex;
+  flex-direction:column;
+  gap:12px;
+}
+
+.message{
+  max-width:75%;
+  padding:12px 16px;
+  border-radius:18px;
+  line-height:1.5;
+  font-size:14px;
+  white-space:pre-wrap;
+  word-wrap:break-word;
+}
+
+.user-msg{
+  background:var(--user-msg);
+  align-self:flex-end;
+  border-bottom-right-radius:4px;
+}
+
+.ai-msg{
+  background:var(--ai-msg);
+  align-self:flex-start;
+  border:1px solid var(--border);
+  border-bottom-left-radius:4px;
+}
+
+.input-area{
+  padding:12px 16px;
+  border-top:1px solid var(--border);
+  background:var(--card);
+  backdrop-filter:blur(var(--blur));
+  display:flex;
+  gap:10px;
+}
+
+.tool-input{
+  flex:1;
+  padding:12px 16px;
+  background:rgba(255,255,255,.05);
+  border:1px solid var(--border);
+  border-radius:24px;
+  color:var(--text);
+  outline:none;
+  font-size:14px;
+}
+
+.tool-btn{
+  padding:12px 20px;
+  background:var(--accent);
+  border:none;
+  border-radius:24px;
+  color:#fff;
+  font-weight:600;
+  cursor:pointer;
+}
+
+.tool-btn:disabled{opacity:.5;}
+
+.empty-state{
+  text-align:center;
+  color:var(--subtext);
+  margin:auto;
+  font-size:14px;
+}
+
+.typing{
+  display:flex;
+  gap:4px;
+  align-items:center;
+}
+
+.typing span{
+  width:8px;
+  height:8px;
+  background:var(--subtext);
+  border-radius:50%;
+  animation: wave 1.4s infinite ease-in-out;
+}
+
+.typing span:nth-child(2){animation-delay:0.2s;}
+.typing span:nth-child(3){animation-delay:0.4s;}
+
+@keyframes wave{
+ 0%, 60%, 100%{transform:translateY(0);opacity:0.4;}
+ 30%{transform:translateY(-8px);opacity:1;}
+}
+
+.back-btn{
+position:fixed;
+top:10px;
+left:10px;
+z-index:999;
+
+padding:6px 10px;
+
+background:rgba(35,25,60,.8);
+border:1px solid rgba(139,92,246,.2);
+
+border-radius:10px;
+
+color:#fff;
+text-decoration:none;
+font-weight:600;
+font-size:12px;
+
+backdrop-filter:blur(16px);
+}
+
+.title{
+padding-top:25px;
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+<a href="index.html" class="back-btn">
+← Kembali
+</a>
+
+<h1 class="title">SUKMA AI</h1>
+</div>
+
+<script>
+function goBack(){
+  if(history.length > 1){
+    history.back();
+  }else{
+    window.location.href = "index.html";
+  }
+}
+</script>
+
+<div class="chat-container" id="chatContainer"></div>
+
+<div class="input-area">
+  <input
+    type="text"
+    id="aiInput"
+    class="tool-input"
+    placeholder="Ketik pesan..."
+    onkeypress="if(event.key==='Enter') sendAI()"
+  >
+  <button onclick="sendAI()" class="tool-btn" id="aiBtn">Kirim</button>
+</div>
+
+<script>
+const GEMINI_KEY = "AIzaSyAQj7Noq5J-dDtr2mZID-lLhnm6O7CYYaM";
+const chatContainer = document.getElementById("chatContainer");
+const input = document.getElementById("aiInput");
+const btn = document.getElementById("aiBtn");
+
+let history = [];
+let messages = [];
+
+// Load chat dari localStorage pas buka halaman
+window.onload = () => {
+  const saved = localStorage.getItem('sukmaChat');
+  if(saved){
+    messages = JSON.parse(saved);
+    messages.forEach(m => addMessage(m.text, m.sender, false));
+  }else{
+    chatContainer.innerHTML = '<div class="empty-state">Mulai chat dengan AI</div>';
+  }
+};
+
+function saveChat(){
+  localStorage.setItem('sukmaChat', JSON.stringify(messages));
+}
+
+function addMessage(text, sender, save=true){
+  const empty = chatContainer.querySelector('.empty-state');
+  if(empty) empty.remove();
+
+  const div = document.createElement('div');
+  div.className = `message ${sender}-msg`;
+  div.textContent = text;
+  chatContainer.appendChild(div);
+  chatContainer.scrollTop = chatContainer.scrollHeight;
+
+  if(save){
+    messages.push({text, sender});
+    saveChat();
+  }
+  return div;
+}
+
+function showTyping(){
+  const div = document.createElement('div');
+  div.className = 'message ai-msg typing';
+  div.id = 'typing-indicator';
+  div.innerHTML = '<span></span><span></span><span></span>';
+  chatContainer.appendChild(div);
+  chatContainer.scrollTop = chatContainer.scrollHeight;
+}
+
+function removeTyping(){
+  const typing = document.getElementById('typing-indicator');
+  if(typing) typing.remove();
+}
+
+// Efek ngetik karakter per karakter
+async function typeMessage(text, element){
+  for(let i=0; i<text.length; i++){
+    element.textContent += text[i];
+    chatContainer.scrollTop = chatContainer.scrollHeight;
+    await new Promise(r => setTimeout(r, 15)); // kecepatan ngetik, kecilin = lebih cepat
+  }
+}
+
+async function sendAI(){
+  const text = input.value.trim();
+  if(!text) return;
+
+  addMessage(text, 'user');
+  history.push({role:'user', parts:[{text}]});
+  input.value = '';
+  btn.disabled = true;
+  showTyping();
+
+  try{
+    const response = await fetch(
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GEMINI_KEY}`,
+      {
+        method:"POST",
+        headers:{"Content-Type":"application/json"},
+        body:JSON.stringify({contents:history})
+      }
+    );
+
+    const data = await response.json();
+    removeTyping();
+
+    if(data.error){
+      addMessage("Error: " + data.error.message, 'ai');
+      return;
+    }
+
+    const reply = data?.candidates?.[0]?.content?.parts?.[0]?.text || "Tidak ada respon";
+
+    // Buat bubble kosong dulu, terus isi pakai efek ngetik
+    const aiDiv = document.createElement('div');
+    aiDiv.className = 'message ai-msg';
+    chatContainer.appendChild(aiDiv);
+    await typeMessage(reply, aiDiv);
+
+    messages.push({text:reply, sender:'ai'});
+    saveChat();
+    history.push({role:'model', parts:[{text:reply}]});
+
+  }catch(err){
+    removeTyping();
+    addMessage("Gagal terhubung: " + err.message, 'ai');
+  }finally{
+    btn.disabled = false;
+  }
+}
+</script>
+
+</body>
+</html>
