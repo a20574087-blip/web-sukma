@@ -22,7 +22,7 @@ const dataRental = [
   },
     {
     nama: "Akun FF S5+",
-    harga: "Rp15.000 / 3 Hari",
+    harga: "Rp5.000 / 3 Hari",
     login: "bind",
     deskripsi: "Akun siap pakai, skin lumayan, rank Heroic. Cocok buat push rank.",
     gambar: [
