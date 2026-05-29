@@ -516,7 +516,7 @@
     <div class="sidebar-group">
       <div class="sidebar-group-title">MENU UTAMA</div>
       <a href="index.html" class="sidebar-item active">🏠 Beranda</a>
-      <a href="layanan.html" target="_blank" class="sidebar-item">📋 Layanan</a>
+      <a href="Layanan.html" target="_blank" class="sidebar-item">📋 Layanan</a>
       <a href="youtube.html" class="sidebar-item">▶️ YouTube</a>
       <a href="downloader.html" target="_blank" class="sidebar-item">⬇️ Downloader</a>
     </div>
@@ -672,7 +672,7 @@
           <span>></span>
         </a>
 
-        <a href="https://whatsapp.com/channel/0029VbCxkLP1HspyUq51ht31" class="link-btn" target="_blank">
+        <a href="https://whatsapp.com/channel/0029VbBtNXF6buMMYswGAm1z" class="link-btn" target="_blank">
           <div class="link-btn-left">
             <img src="https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/whatsapp.svg" alt="Saluran WA" class="link-icon">
             SALURAN WHATSAPP
@@ -714,7 +714,7 @@
 
 <script>
   const waNumber = "6282266888892";
-  let audioPlayed = false;
+  const text = "Halooo... Selamat datang di website SukmaJr. Silahkan pilih menu di bawah untuk menghubungi admin jika ingin membeli, menjual, rental akun harap baca dan patuhi langkah-langkah nya ya. Terimaksih";
   
   const menuBtn = document.getElementById('menuBtn');
   const sidebar = document.getElementById('sidebar');
@@ -722,6 +722,11 @@
   const loader = document.getElementById('loader');
   const progressFill = document.getElementById('progressFill');
   const wrapper = document.getElementById('wrapper');
+  const typingElement = document.getElementById('typingText');
+
+  // Cek sessionStorage: udah pernah masuk belum
+  const alreadyVisited = sessionStorage.getItem('sukmajr_visited') === 'true';
+  const audioPlayed = sessionStorage.getItem('sukmajr_audio') === 'true';
 
   menuBtn.onclick = () => {
     menuBtn.classList.toggle('active');
@@ -736,10 +741,7 @@
     document.body.style.overflow = 'auto';
   }
 
-  const text = "Haloooo... Selamat datang di website SukmaJr. Silahkan pilih menu di bawah untuk menghubungi admin jika ingin membeli, menjual, rental akun harap baca dan patuhi langkah-langkah nya ya. Terimakasih";
   let i = 0;
-  const typingElement = document.getElementById('typingText');
-  
   function typeWriter() {
     if (i < text.length) {
       typingElement.innerHTML += text.charAt(i);
@@ -752,7 +754,7 @@
     if (audioPlayed) return;
     if (!('speechSynthesis' in window)) return;
     
-    audioPlayed = true;
+    sessionStorage.setItem('sukmajr_audio', 'true');
     window.speechSynthesis.cancel();
     
     const speech = new SpeechSynthesisUtterance(text);
@@ -764,41 +766,52 @@
     window.speechSynthesis.speak(speech);
   }
 
-  // Loading bar
-  let progress = 0;
-  const interval = setInterval(() => {
-    progress += 2;
-    if(progressFill) progressFill.style.width = progress + '%';
-    if (progress >= 100) {
-      clearInterval(interval);
-      setTimeout(() => {
-        loader.innerHTML = `
-          <img src="https://files.catbox.moe/6m6ii5.jpg" alt="Loading" class="loader-img">
-          <h2 style="color:white; margin-top:20px; font-weight:600;">Tap to Enter</h2>
-          <p style="color:var(--subtext); margin-top:8px;">Klik untuk masuk & dengar suara</p>
-        `;
-        
-        loader.onclick = () => {
-          speakText();
-          loader.classList.add('hidden');
-          wrapper.classList.add('show');
-          document.body.style.overflow = 'auto';
-          typeWriter();
-          loader.onclick = null;
-        };
-        
-      }, 300);
-    }
-  }, 40);
+  function enterWebsite() {
+    loader.classList.add('hidden');
+    wrapper.classList.add('show');
+    document.body.style.overflow = 'auto';
+    sessionStorage.setItem('sukmajr_visited', 'true');
+    typeWriter();
+  }
 
-  // Fallback 4 detik
-  setTimeout(() => {
-    if(loader && !loader.classList.contains('hidden')){
-      loader.classList.add('hidden');
-      wrapper.classList.add('show');
-      document.body.style.overflow = 'auto';
-    }
-  }, 4000);
+  // KALO UDAH PERNAH MASUK DI SESI INI
+  if (alreadyVisited) {
+    loader.classList.add('hidden');
+    wrapper.classList.add('show');
+    document.body.style.overflow = 'auto';
+    typingElement.innerHTML = text; // langsung tampil full tanpa typing
+  } 
+  // KALO BELUM PERNAH MASUK
+  else {
+    let progress = 0;
+    const interval = setInterval(() => {
+      progress += 2;
+      if(progressFill) progressFill.style.width = progress + '%';
+      if (progress >= 100) {
+        clearInterval(interval);
+        setTimeout(() => {
+          loader.innerHTML = `
+            <img src="https://files.catbox.moe/6m6ii5.jpg" alt="Loading" class="loader-img">
+            <h2 style="color:white; margin-top:20px; font-weight:600;">Tap to Enter</h2>
+            <p style="color:var(--subtext); margin-top:8px;">Klik untuk masuk & dengar suara</p>
+          `;
+          
+          loader.onclick = () => {
+            speakText();
+            enterWebsite();
+            loader.onclick = null;
+          };
+        }, 300);
+      }
+    }, 40);
+
+    // Fallback 4 detik
+    setTimeout(() => {
+      if(loader && !loader.classList.contains('hidden')){
+        enterWebsite();
+      }
+    }, 4000);
+  }
 
   function toggleNote(type) {
     const content = document.getElementById('noteContent-' + type);
@@ -831,4 +844,4 @@
   window.sendWA = sendWA;
 </script>
 </body>
-  </html>
+</html>
