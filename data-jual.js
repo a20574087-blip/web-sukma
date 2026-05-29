@@ -1,6 +1,6 @@
 const dataJual = [
   {
-    nama: "Akun FF S1 SG2",
+    nama: "Akun FF S1-S10 SG2",
     harga: "Rp150.000",
     login: "google",
     deskripsi: "Akun SG2, SG Lengket, SG Naga. Data aman, full gmail. Rekber ready.",
