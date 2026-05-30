@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Payment - SUKMA JR</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    :root {
+      --bg1: #0a0a1f;
+      --bg2: #1a0b2e;
+      --accent: #00ffff;
+      --accent-glow: rgba(0, 255, 255, 0.4);
+      --card: rgba(20, 20, 40, 0.6);
+      --text: #f5f5f7;
+      --subtext: #a1a1aa;
+      --blur: 16px;
+    }
+
+    * {margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif;}
+
+    body {
+      background: radial-gradient(1200px 800px at 50% -20%, var(--bg2), var(--bg1)),
+                  linear-gradient(180deg, var(--bg1), var(--bg2));
+      color: var(--text);
+      min-height: 100vh;
+    }
+
+    /* TOMBOL BACK */
+    .btn-back {
+      position: fixed;
+      top: 18px;
+      left: 18px;
+      z-index: 1001;
+      width: 46px;
+      height: 46px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--card);
+      border: 1px solid rgba(0,255,255,0.2);
+      border-radius: 14px;
+      backdrop-filter: blur(12px);
+      color: var(--text);
+      font-size: 18px;
+      text-decoration: none;
+      transition: all 0.25s ease;
+    }
+    .btn-back:hover {
+      background: rgba(0,255,255,0.2);
+      border-color: var(--accent);
+      box-shadow: 0 0 15px var(--accent-glow);
+      transform: scale(1.05);
+    }
+
+    #intro {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      padding: 20px;
+      text-align: center;
+    }
+    #intro h1 { 
+      font-size: 28px; 
+      color: var(--accent); 
+      margin-bottom: 12px;
+      text-shadow: 0 0 20px var(--accent-glow);
+    }
+    #intro p { 
+      font-size: 15px; 
+      color: var(--subtext);
+      margin-bottom: 28px; 
+      max-width: 400px;
+    }
+    #goPayment {
+      padding: 14px 32px;
+      background: linear-gradient(90deg, var(--accent), #7dd3fc);
+      border: none;
+      border-radius: 12px;
+      font-size: 17px;
+      font-weight: 600;
+      cursor: pointer;
+      color: #000;
+      box-shadow: 0 0 20px var(--accent-glow);
+    }
+
+    #payment {
+      display: none;
+      padding: 80px 20px 20px;
+      max-width: 500px;
+      margin: 0 auto;
+    }
+
+    header {
+      padding: 12px;
+      background: var(--card);
+      border: 1px solid rgba(0,255,255,0.2);
+      border-radius: 12px;
+      font-size: 13px;
+      text-align: center;
+      backdrop-filter: blur(var(--blur));
+      margin-bottom: 20px;
+      color: var(--subtext);
+    }
+
+    .profile {
+      text-align: center;
+      margin-bottom: 24px;
+    }
+    .profile img {
+      width: 110px;
+      height: 110px;
+      border-radius: 50%;
+      border: 3px solid var(--accent);
+      margin-bottom: 12px;
+      box-shadow: 0 0 30px var(--accent-glow);
+      object-fit: cover;
+    }
+
+    .button {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      width: 100%;
+      margin: 12px 0;
+      padding: 16px;
+      background: var(--card);
+      border: 1px solid rgba(0,255,255,0.3);
+      border-radius: 14px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: 0.25s;
+      backdrop-filter: blur(var(--blur));
+      color: var(--text);
+    }
+    .button:hover { 
+      background: rgba(0,255,255,0.15);
+      border-color: var(--accent);
+    }
+
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(0,0,0,0.85);
+      backdrop-filter: blur(8px);
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+      z-index: 1000;
+    }
+    .modal-content {
+      background: var(--card);
+      padding: 24px;
+      border-radius: 18px;
+      border: 1px solid rgba(0,255,255,0.3);
+      max-width: 420px;
+      width: 100%;
+      text-align: center;
+      backdrop-filter: blur(var(--blur));
+    }
+    .modal-content h3 {
+      font-size: 18px;
+      margin-bottom: 16px;
+      color: var(--accent);
+    }
+    #qrisImg {
+      width: 240px;
+      max-width: 80%;
+      height: auto;
+      border-radius: 12px;
+      border: 2px solid var(--accent);
+      margin: 14px auto;
+      display: block;
+    }
+    .copy-btn {
+      margin: 8px 5px;
+      padding: 12px 20px;
+      border: none;
+      border-radius: 10px;
+      background: var(--accent);
+      color: #000;
+      cursor: pointer;
+      font-size: 15px;
+      font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: 0.3s;
+    }
+    .copy-btn:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    .toast {
+      position: fixed;
+      bottom: 30px;
+      left: 50%;
+      transform: translateX(-50%) translateY(100px);
+      background: var(--card);
+      border: 1px solid var(--accent);
+      padding: 12px 20px;
+      border-radius: 10px;
+      font-size: 14px;
+      opacity: 0;
+      transition: 0.4s;
+      z-index: 2000;
+    }
+    .toast.show {
+      transform: translateX(-50%) translateY(0);
+      opacity: 1;
+    }
+  </style>
+</head>
+<body>
+  <!-- TOMBOL BACK KE INDEX -->
+  <a href="index.html" class="btn-back">
+    <i class="fa-solid fa-arrow-left"></i>
+  </a>
+
+  <div id="intro">
+    <h1>Yow, Sukma di sini 😜🤙</h1>
+    <p>Selamat datang di website payment. SS bukti transfer ya biar aman. Makasih 😊</p>
+    <button id="goPayment">Go to Payment</button>
+  </div>
+
+  <div id="payment">
+    <header id="datetime"></header>
+    
+    <div class="profile">
+      <img id="profileImg" src="" alt="Profile">
+      <h2>Metode Pembayaran</h2>
+    </div>
+
+    <button class="button" onclick="showQris()"><i class="fa-solid fa-qrcode"></i> QRIS</button>
+    <button class="button" onclick="showDetail('dana')"><i class="fa-solid fa-wallet"></i> Dana</button>
+    <button class="button" onclick="showDetail('ovo')"><i class="fa-solid fa-wallet"></i> Ovo</button>
+    <button class="button" onclick="showDetail('gopay')"><i class="fa-solid fa-wallet"></i> Gopay</button>
+  </div>
+
+  <div id="modal" class="modal" onclick="closeModal(event)">
+    <div class="modal-content" id="modalContent"></div>
+  </div>
+
+  <audio id="bgMusic" loop>
+    <source src="musik.mp3" type="audio/mpeg">
+  </audio>
+
+  <div class="toast" id="toast"></div>
+
+  <script src="data-payment.js"></script>
+
+  <script>
+    const bgMusic = document.getElementById('bgMusic');
+    const toast = document.getElementById('toast');
+    const data = window.paymentData;
+
+    document.getElementById("profileImg").src = data.profile;
+
+    document.getElementById("goPayment").addEventListener("click", () => {
+      document.getElementById("intro").style.display = "none";
+      document.getElementById("payment").style.display = "block";
+      bgMusic.play().catch(() => showToast('Klik layar buat aktifin musik'));
+    });
+
+    function showQris() {
+      document.getElementById("modalContent").innerHTML = `
+        <h3>Scan QRIS</h3>
+        <img id="qrisImg" src="${data.qris}" alt="QRIS">
+        <button class="copy-btn" id="btnDownloadQris">
+          <i class="fa-solid fa-download"></i> Save QRIS
+        </button>
+        <button class="copy-btn" onclick="closeModal()"><i class="fa-solid fa-xmark"></i> Tutup</button>
+      `;
+      document.getElementById("modal").style.display = "flex";
+      
+      document.getElementById('btnDownloadQris').onclick = downloadQrisBtn;
+    }
+
+    function downloadQrisBtn() {
+      const btn = document.getElementById('btnDownloadQris');
+      const originalHTML = btn.innerHTML;
+      
+      btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Downloading...';
+      btn.disabled = true;
+      
+      const a = document.createElement('a');
+      a.href = data.qris;
+      a.download = 'QRIS-SukmaJR.jpg';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      
+      btn.innerHTML = '<i class="fa-solid fa-check"></i> Berhasil';
+      showToast('QRIS berhasil disimpan');
+      
+      setTimeout(() => {
+        btn.innerHTML = originalHTML;
+        btn.disabled = false;
+      }, 2000);
+    }
+
+    function showDetail(method) {
+      const m = data[method];
+      if (!m) return showToast('Data tidak ditemukan');
+      
+      document.getElementById("modalContent").innerHTML = `
+        <h3>${method.toUpperCase()}</h3>
+        <p>Nama: <strong>${m.nama}</strong></p>
+        <p>Nomor: <strong>${m.nomor}</strong></p>
+        <button class="copy-btn" onclick="copyNomor('${m.nomor}')"><i class="fa-solid fa-copy"></i> Copy</button>
+        <button class="copy-btn" onclick="closeModal()"><i class="fa-solid fa-xmark"></i> Tutup</button>
+      `;
+      document.getElementById("modal").style.display = "flex";
+    }
+
+    function closeModal(event) {
+      if (!event || event.target.id === 'modal') {
+        document.getElementById("modal").style.display = "none";
+      }
+    }
+
+    function copyNomor(nomor) {
+      navigator.clipboard.writeText(nomor);
+      showToast('Nomor disalin: ' + nomor);
+    }
+
+    function showToast(msg) {
+      toast.textContent = msg;
+      toast.classList.add('show');
+      setTimeout(() => toast.classList.remove('show'), 2500);
+    }
+
+    function updateTime() {
+      const now = new Date();
+      const hari = now.toLocaleDateString('id-ID', { weekday: 'long' });
+      const tanggal = now.toLocaleDateString('id-ID');
+      const jam = now.toLocaleTimeString('id-ID');
+      document.getElementById("datetime").textContent = `${hari}, ${tanggal} - ${jam}`;
+    }
+    setInterval(updateTime, 1000);
+    updateTime();
+  </script>
+</body>
+</html>
