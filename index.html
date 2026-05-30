@@ -731,9 +731,10 @@
   const wrapper = document.getElementById('wrapper');
   const typingElement = document.getElementById('typingText');
 
-  // Cek sessionStorage: udah pernah masuk belum
+  // SKIP LOADER KALO: udah pernah masuk / balik dari chat-ai / pake tombol back browser
+  const fromChatAI = document.referrer && document.referrer.includes('chat-ai.html');
   const alreadyVisited = sessionStorage.getItem('sukmajr_visited') === 'true';
-  const audioPlayed = sessionStorage.getItem('sukmajr_audio') === 'true';
+  const skipLoader = alreadyVisited || fromChatAI || performance.navigation.type === 2;
 
   menuBtn.onclick = () => {
     menuBtn.classList.toggle('active');
@@ -758,7 +759,7 @@
   }
 
   function speakText() {
-    if (audioPlayed) return;
+    if (sessionStorage.getItem('sukmajr_audio') === 'true') return;
     if (!('speechSynthesis' in window)) return;
     
     sessionStorage.setItem('sukmajr_audio', 'true');
@@ -773,22 +774,20 @@
     window.speechSynthesis.speak(speech);
   }
 
-  function enterWebsite() {
+  function enterWebsite(withTyping = true) {
     loader.classList.add('hidden');
     wrapper.classList.add('show');
     document.body.style.overflow = 'auto';
     sessionStorage.setItem('sukmajr_visited', 'true');
-    typeWriter();
+    
+    if(withTyping) typeWriter();
+    else typingElement.innerHTML = text;
   }
 
-  // KALO UDAH PERNAH MASUK DI SESI INI
-  if (alreadyVisited) {
-    loader.classList.add('hidden');
-    wrapper.classList.add('show');
-    document.body.style.overflow = 'auto';
-    typingElement.innerHTML = text; // langsung tampil full tanpa typing
+  // LANGSUNG TAMPIL KALO SKIP LOADER
+  if (skipLoader) {
+    enterWebsite(false);
   } 
-  // KALO BELUM PERNAH MASUK
   else {
     let progress = 0;
     const interval = setInterval(() => {
@@ -805,17 +804,16 @@
           
           loader.onclick = () => {
             speakText();
-            enterWebsite();
+            enterWebsite(true);
             loader.onclick = null;
           };
         }, 300);
       }
     }, 40);
 
-    // Fallback 4 detik
     setTimeout(() => {
       if(loader && !loader.classList.contains('hidden')){
-        enterWebsite();
+        enterWebsite(true);
       }
     }, 4000);
   }
